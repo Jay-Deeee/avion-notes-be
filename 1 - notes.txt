@@ -1,0 +1,137 @@
+IRB SHORTCUTS
+
+ctrl + u = clear line
+ctrl + l = clear all
+ctrl + a = start of the line
+ctrl + e = end of the line
+up arrow = prev command
+# = comment
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+DATA TYPES
+
+boolean = true or false
+string = "" = "Jino"
+integer = number = 1
+float = decimal = 1.0
+hash = object = {
+  name: "Jino",
+  batch: 37
+}
+array = []
+
+OPERANDS
+
+<=> = spaceship operator
+
+<   =   >
+-1  0   1
+
+ex.
+1 <=> 1 = 0
+2 <=> 1 = 1
+3 <=> 2 = -1
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+USE SNAKE CASE FOR RUBY
+
+variables are declared just by calling it with all lower case (no more var/let/const) example_one = var/let
+const can be done with all caps variables EXAMPLE_TWO = CONST
+
+for string only use "" or ''
+`` is reserved for executables
+"" vs ''
+"" = able to perform string interpolation => "#{name} enters the name variable"
+== - only checks if values are the same, disregards data types
+=== - additionally, checks if the data types are the same
+
+METHODS (written after variable)
+.class = shows data type
+.is_a? <data type> = returns a boolean value (true or false) for the entered data type
+.include?(item) = returns a boolean value if item is included within the variable
+.to_i or .to_integer = turns the variable into an integer
+.to_s = turns variable to string
+.to_f = turns variable to float
+
+predicate method = conditional followed by a ?
+                 = returns a boolean value for the conditional
+example = 1.even? = false
+
+bang method => .conditional!
+            = transforms variable depending on conditional
+example = 
+  name = "justine"
+  name.upcase!
+  name = "JUSTINE"
+
+"destructive" method = transforms or mutates a variable
+usually preferred to just save into a new variable than to us the bang method, but it will have its uses
+
+poetry mode = removing parenthesis if no value is given
+example => a.empty?() == a.empty?
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ARRAYS
+
+can contain any data type
+arr = ["jino", 1, {batch: 37}, true, "avion"]
+index = positioning of element: starts at 0 -- reverse will start at -1
+
+METHOD CALLS
+
+.first = returns first index
+.last = returs last index
+.length = returns amount of variables
+.take(n) = returns first n variables of array
+.drop(n) = removes first n variables of the array and returns remaining variables
+.slice(n..m) = returns n through m index of an array
+.slice(n...m) = returns n through m-1 index of an array (doesn't include m)
+.sort = arranges variables in ascending order (mostly used for integers/floats)
+.reverse = reverses indexes of array
+.select {|n| n.is_a? <data type>} = selects variables in the array, given n = variable where n is chosen based on a condition(.is_a? <data type>)
+.reject = opposite of select wherein it removes selected variables and returns remaining variables in an array
+.include(n) = checks to see if n is included in the array
+.join("*") = joins variables of an array into a string separated by what's inside the (). If empty, it will not separate
+.each = iterates through each variable of an array
+.uniq = returns an array without repeating variables ex. [1, 1, 1] = [1]
+
+"DESTRUCTIVE" ARRAY METHODS
+
+.shift = removes and returns first index
+.pop = removes and returns last index
+.unshift(n) = adds n to the start of an array
+.push(n) = adds n to the end of an array
+.delete(n) = deletes n from array
+.delete_at(n) = deletes index n from array
+.concat = arr1.concat(arr2) = concatenates arr2 into the end of arr1. changes arr1 but not arr2
+.map/.collect = .map and .collect are similar to .each, the difference is that these return an array containing the transformed elements
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+DATABASE => used to store/organize a collection of data
+DBMS - Database Management System => manages the database
+
+2 types of databases
+
+1. RDB - Relational Database => different parts of the database that /should/ have relationships with each other (can have 0 or more connections)
+  ex. posts => comments, users => orders
+
+  normally has 3 databases within
+    1. development database => needed data before deployment (experimentations here)
+    2. test database => used for testing via code
+    3. production database => live/golden database = deployed database; contains actual customer data
+
+  samples of RDBs: PostgreSQL, MySQL, MariaDB, SQLite
+
+2. NoSQL Database - non-relational database => used only for storing and retrieving data
+  - all data in one place
+  - faster processing of data because all data is in one area
+  - used by companies that need to process massive amounts of data
+
+SQL => Structured Query Language
+  - Language of databases
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------

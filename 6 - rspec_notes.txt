@@ -1,0 +1,158 @@
+Similar to TDD but used for complex testing
+  - ex: testing for apis and such
+
+go to rubygems.org and search and install rspec rails
+
+# place into Gemfile
+group :development, :test do
+  gem 'rspec-rails', '~> 8.0.0'
+end
+
+bundle install
+
+rails generate rspec:install
+
+# used for updating old rspec versions (from old apps or so)
+bundle update rspec-rails
+
+# generating a model
+rails generate rspec:model <model_name>
+
+# generating a controller
+rails g rspec:controller <controller_name>
+
+# running rspec
+bundle exec rspec spec/<file_path>
+
+# within the rspec file (example for model)
+require 'rails_helper'
+
+RSpec.describe <model_name>, type: :model<this is the folder name within rspec> do
+  context 'validates' do
+    it 'does not allow creation of post with invalid attribute values' do
+      post = <model_name>.new(title: nil, body: nil)
+      expect(post).not_to be_valid
+      expect(post.errors[:body]).to include("can't be blank")
+      expect(post.errors[:title]).to include("can't be blank")
+    end
+
+    it 'creates a new post with valid attribute values' do
+      post = <model_name>.new(title: "first title", body: 'first body')
+      expect(post).to be_valid
+    end
+  end
+end
+
+# within rspec file (example for controller)
+require 'rails_helper'
+
+RSpec.describe "Post<controller_name>", type: :request<this is the folder name within rspec> do
+  let!(:user) { <params> }
+  let!(:new_post) { Post.create!(title: "sample title", body: "sample body") } # this is how you define variables for all tests within the function
+
+  describe "GET /posts" do
+    it 'returns a success response' do
+      get '/posts' <can also be path/url helper>
+      expect(response).to have_http_status(200)
+    end
+  end
+
+  describe "GET /posts" do
+    it 'returns a success response when getting a single record' do
+      get posts_url, params: { id: new_post.id }
+      expect(response).to have_http_status(200)
+    end
+  end
+
+  describe "POST /posts" do
+    it 'creates a new post with valid params' do
+      expect{
+        post posts_url, params: { post: { title: 'my title', body: 'my body' } }
+      }.to change(Post, :count).by(1)
+      # expect(Post.count).to eq(2)
+      # expect(response).to redirect_to(Post.last)
+      # expect(response).to have_http_status(302)
+    end
+  end
+end
+
+# before(:all)
+describe User do
+  before :each do
+    @user = User.make
+  end
+
+  # ...
+end
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+FACTORY_BOT
+
+search factory_bot on rubygems.org
+
+group :development, :test do
+  gem 'factory_bot_rails'
+end
+
+# put inside spec/rails_helper.rb
+config.include FactoryBot::Syntax::Methods
+
+rails g factory_bot:model <model_name>
+
+# factories/<model_name>
+FactoryBot.define do
+  factory :<model_name> do
+    trait :post_one do
+      title { 'my new title' }
+      body { nil }
+    end
+    trait :post_two do
+      title { 'my new title' }
+      body { 'my new body' }
+    end
+  end
+end
+
+# new model code
+require 'rails_helper'
+
+RSpec.describe <model_name>, type: :model<this is the folder name within rspec> do
+  context 'validates' do
+    it 'does not allow creation of post with invalid attribute values' do
+      post = FactoryBot.build(:post, :post_one)
+      expect(post).not_to be_valid
+    end
+
+    it 'creates a new post with valid attribute values' do
+      post = FactoryBot.build(:post, :post_two)
+      expect(post).to be_valid
+    end
+  end
+end
+
+# alternative
+FactoryBot.define do
+  factory :<model_name> do
+    title { 'my new title' }
+    body { 'my new body' }
+  end
+end
+
+# alternative model
+RSpec.describe <model_name>, type: :model<this is the folder name within rspec> do
+  context 'validates' do
+    it 'does not allow creation of post with invalid attribute values' do
+      post = FactoryBot.build(:post, title: nil)
+      expect(post).not_to be_valid
+    end
+
+    it 'creates a new post with valid attribute values' do
+      post = FactoryBot.build(:post)
+      expect(post).to be_valid
+    end
+  end
+end
+
+# within controller
+post = FactoryBot.create(:post)

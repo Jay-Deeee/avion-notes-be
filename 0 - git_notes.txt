@@ -1,0 +1,34 @@
+# check all branches
+git branch -a
+
+# adding a new branch
+# git checkout -b <branch_name/path>
+git checkout -b design/index_body
+
+# swapping branches
+# git checkout <branch_name/path>
+git checkout main(or master)
+
+# find all changes (since last fetch/pull)
+git fetch
+# download all changes
+git pull (origin main/master #if not set up)
+
+# push to current branch
+git push origin HEAD
+
+# getting updated code from main => branch
+# after successful pull request, go to main
+git fetch
+git pull (origin main/master)
+# go to branch
+git merge main (or master)
+
+# check changes between branch to main
+git diff .
+
+# delete branch after changes are merged
+# go to main branch
+git checkout main(or master)
+# delete
+git branch -D <branch_name>

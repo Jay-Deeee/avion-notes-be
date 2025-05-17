@@ -1,0 +1,43 @@
+# create a folder in controller/model
+ex: admin
+
+# create file in that folder
+ex: admin/users_controller.rb
+
+# create path in routes
+namespace :admin do
+  resources :users
+end
+
+# under views you have to do the same thing
+# create folder for that category
+ex: admin
+# then create a folder for that controller
+ex: admin/users
+# in that folder create your view files
+ex: admin/users/index.html.erb
+
+
+# ActiveRecord scoping
+# enter these in the model file
+scope :admin, -> { where.is_admin: true }
+scope :has_started, -> { where('start_date < ?', Time.current) }
+
+# this is the same code, just consolidated
+scope :admin_has_started, -> { where(is_admin: true).where('start_date < ?', Time.current) }
+
+# call in the controller this way
+@user = User.admin.has_started
+
+or 
+
+@user = User.admin_has_started
+
+# under 'protected' in 'application_controller.rb'
+def after_sign_in_path_for(_resource)
+  if current_user.is_admin
+    admin_users_path
+  else
+    root_path
+  end
+end

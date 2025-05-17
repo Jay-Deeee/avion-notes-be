@@ -1,0 +1,75 @@
+# command for creating the api
+rails new <api_name> --api -d postgresql
+
+rails db:create
+
+# for creating a new version of api
+app/controllers/api/v1<version> -> create this file
+
+# create models (if not specifying data type, default is string)
+rails g model User name phone_number
+
+# namespace within the v1 controllers
+class api::V1::UsersController < ApplicationController
+  before_action :set_user, only: [:show, :update, :destroy]
+  def index
+    @users = User.all
+
+    render json: { message: "Success", data: @users, count: @users.count }
+  end
+
+  def show
+    render json: @user
+  end
+
+  def create
+    @user = User.new(user_params)
+
+    if @user.save
+      render json: @user, status: :created, location: api_v1_user_url(@user)
+    else
+      render json: @user.errors, status: :unprocessable entity
+    end
+  end
+
+  def update
+    if @user.update(user_params)
+      render json: @user
+    else
+      render json: @user.errors, status: :unprocessable entity
+    end
+  end
+
+  def destroy
+    @user.destroy
+  end
+
+  private
+
+  def set_user
+    @user = User.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Record not found" }
+  end
+
+  def user_params
+  params.require(:user).permit(:name, :phone_number)
+  end
+end
+
+# within the routes.rb file
+namespace :api do
+  namespace :v1 do
+    resources :users
+  end
+end
+
+#create a record
+User.create!(name: "Justin", phone_number: "09172938293")
+
+# to test api, use in postman app in new request
+GET http://127.0.0.1:3000/api/v1/users
+
+# to test using a client
+go to cors.rb, uncomment the code and change the source
+uncomment gem "rack-cors" in the Gemfile

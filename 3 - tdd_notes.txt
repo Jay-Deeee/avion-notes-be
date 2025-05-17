@@ -1,0 +1,10 @@
+TDD - TEST DRIVEN DEVELOPMENT
+
+ - development version of the scientific method
+    - Requirement
+    - Expected Output
+    - Test Assertion
+    - Implementation Code
+
+assert = expect success
+assert_not = expect failure

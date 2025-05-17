@@ -1,0 +1,67 @@
+RUBY ON RAILS
+   - full stack programming Language
+   - created by DHH
+   - MVC - routes => Model View Controller
+
+rails db:drop 
+rails db:create
+rails db:migrate
+
+rails db:migrate:status
+rails db:migrate:down VERSION=ID
+rails g migration add _migration_file_name_here
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+start postgres => sudo -u postgres psql
+
+ASDF
+create new rails app with specific rails version => rails new <app_name> -d=postgresql -v 7.2.2.1
+RBENV
+create new rails app => rails new <app_name> -d=postgresql
+create new rails app with specific rails version => rails _7.2.2.1_ new <app_name> -d=postgresql
+
+rails db:create
+rails db:migrate:status
+
+start app => rails s
+
+ruby tag => <% @something %> - this is to not show
+	    <%= @something %> - this is to show
+
+ex.
+
+<% @pages.each do |name| %>
+  <li> <%= name %> </li>
+<% end %>
+
+binding.b => stop the code in a specific area => debugger
+continue => run in console to continue the code after current binding.b
+
+console command to create model
+
+generate == g
+rails g model <ModelName> <data1:datatype> <data2:datatype>
+
+example:
+rails generate model Comment commenter:string body:text article:references
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+INSTALLING DEVISE
+  - gem called "Devise" for authentication functions on rails
+
+# put this in gemfile
+gem 'devise', '~> 4.9', '>= 4.9.4'
+
+rails generate devise:install
+
+# put this in config/environments/development.rb
+config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+
+rails g devise:views
+rails generate devise <MODEL name> # Usually "User"
+
+rails db:migrate
+
+<%= link_to "Signout", destroy_user_session_path, data: { turbo_method: :delete, turbo_confirm: "Signout?" } %>

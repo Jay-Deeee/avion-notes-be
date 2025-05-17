@@ -1,0 +1,154 @@
+# ensure devise is installed
+rails generate devise:install
+rails generate devise User
+
+
+# uncomment confimables in migration file and add boolean 'approved'
+t.boolean :approved, default: false
+t.string   :confirmation_token
+t.datetime :confirmed_at
+t.datetime :confirmation_sent_at
+t.string   :unconfirmed_email
+
+
+# migrate
+rails db:migrate
+
+
+# add :confirmable in user.rb
+devise :database_authenticatable, :registerable,
+       :recoverable, :rememberable, :validatable,
+       :confirmable
+
+
+# generate rails user controller to override default create method
+rails g devise:controllers <scope>
+
+
+# update devise in routes file
+devise_for :users, controllers: { registrations: "users/registrations" }
+
+
+# overwrite create method in 'app/controllers/users/registrations_controller.rb'
+
+class Users::RegistrationsController < Devise::RegistrationsController
+  def create
+    build_resource(sign_up_params)
+    resource.skip_confirmation_notification!
+
+    if resource.save
+      UserMailer.pending_approval(resource).deliver_later
+      redirect_to pending_approval_path
+    else
+      clean_up_passwords(resource)
+      set_minimum_password_length
+      respond_with resource
+    end
+  end
+
+  private
+
+  def sign_up_params
+    params.require(:user).permit(:first_name, :last_name, :email, :password, :password_confirmation)
+  end
+end
+
+
+# create Pending Approval Email
+rails generate mailer UserMailer
+
+
+# edit the newly generated UserMailer controller in 'app/mailers/user_mailer.rb'
+
+class UserMailer < ApplicationMailer
+  default from: 'no-reply@yourapp.com'
+
+  def pending_approval(user)
+    @user = user
+    mail(to: @user.email, subject: "Your registration is pending admin approval")
+  end
+end
+
+
+# add view for Pending Approval Email in 'app/views/user_mailer/pending_approval.html.erb'
+
+<h1>Thank you for registering!</h1>
+<p>Your account is pending admin approval. You will receive another email once approved.</p>
+
+
+# add approve method in controller to use it
+
+def approve
+  user = User.find(params[:id])
+  user.update(approved: true)
+
+  # Send Devise confirmation instructions after approval
+  user.send_confirmation_instructions
+
+  redirect_to admin_users_path, notice: "User approved and confirmation email sent."
+end
+
+
+# restrict login based on approval/confirmation
+
+IN 'user.rb'
+
+def active_for_authentication?
+  super && approved?
+end
+
+def inactive_message
+  if !approved?
+    :not_approved
+  else
+    super
+  end
+end
+
+IN 'config/locales/devise.en.yml'
+
+en:
+  devise:
+    failure:
+      not_approved: "Your account is not yet approved by an admin."
+
+
+# enable SMTP in 'development.rb'
+
+config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  ActionMailer::Base.delivery_method = :smtp
+  ActionMailer::Base.smtp_settings = {
+    address: 'smtp.gmail.com',
+    port: 587,
+    domain: 'gmail.com',
+    user_name: ENV['SMTP_USERNAME'],
+    password: ENV['SMTP_PASSWORD'],
+    authentication: 'plain',
+    enable_starttls_auto: true
+}
+
+
+# put username and password in '.env' file
+
+SMTP_USERNAME = example@gmail.com
+SMTP_PASSWORD = 16-digit generated password
+
+
+# create view for pending applications and add in controller
+
+def pending
+  @pending_users = User.where(approved: false)
+end
+
+# don't forget to add pending and approve in routes
+
+namespace :admin do
+  resources :users do
+    member do
+      patch :approve
+    end
+    collection do
+      get :pending
+    end
+  end
+end

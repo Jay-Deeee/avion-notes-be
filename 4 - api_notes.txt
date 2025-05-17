@@ -1,0 +1,34 @@
+rapidapi.com - alpha vantage
+
+under 'Code Snippets'
+
+copy paste the code
+
+require 'uri'
+require 'http'
+
+require 'json'
+JSON.parse(response_body) => JSON.parse(response.body)
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+important for each stock:
+
+- symbol
+- open price
+
+symbol = JSON.parse(response_body)["Meta Data"]["2. Symbol"]
+stock_price = JSON.parse(response_body).dig("Time Series (5min)").values.first.dig("1. open")
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+create "wrappers" folder within app folder
+  - create 'ava_api.rb' file inside (refer to pic for code)
+
+application.rb
+  - config.eager_load_paths << Rails.root.join("wrappers") <= "wrappers" = folder name of what you added into app folder
+
+# dotenv
+create '.env' file in main path and paste "API_KEY = <key here>"
+
+gem "dotenv", groups: [:development, :test] <= inside gemfile for dotenv

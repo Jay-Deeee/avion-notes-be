@@ -1,0 +1,1 @@
+This is just a collection of my notes for our back-end course at AVION School. The lessons were composed of Ruby and Ruby on rails.
