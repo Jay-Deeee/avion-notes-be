@@ -5,7 +5,7 @@ set -o errexit
 
 bundle install
 bundle exec rails assets:precompile
-buncle exec rails assets:clean
+bundle exec rails assets:clean
 
 # in root directory of the app, create file named 'render.yaml', paste this
 
@@ -31,3 +31,16 @@ services:
       - key: RAILS_MASTER_KEY
         sync:false- key: WEB_CONCURRENCY
         value: 2 # sensible default
+
+# replace in config/database.yml (at the bottom)
+
+production:
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>
+
+# enter in build command for render settings
+
+bundle install; rails db:migrate; rails db:seed; bundle exec rails assets:precompile; bundle exec rails assets:clean;
+
+# create database in render and paste internal database url in render's env
+DATABASE_URL = [key_here]
