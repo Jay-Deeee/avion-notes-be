@@ -1,0 +1,85 @@
+# Instructions to generate modal support in rails using Stimulus and vanilla CSS (or SCSS)
+
+# Step 1: run this to generate a new Stimulus controller
+rails g stimulus modal    # modal is the <controller_name>
+
+# Step 2: place in the created 'app/javascript/controllers/modal_controller.js'
+import { Controller } from "@hotwired/stimulus"
+
+export default class extends Controller {
+  static targets = ["modal"]
+
+  connect() {
+    this.modalTarget.classList.add("hidden")
+  }
+
+  open(event) {
+    event.preventDefault()
+    this.modalTarget.classList.remove("hidden")
+  }
+
+  close() {
+    this.modalTarget.classList.add("hidden")
+  }
+}
+
+# Step 3: place this in the relevant file (where you will use the modal -- this specific code uses bootstrap and fontawesome list-styles)
+<div data-controller="modal">
+    <button type="button"
+            class="btn btn-sm"
+            data-action="click->modal#open">
+      <i class="fa-solid fa-pen"></i>
+    </button>
+
+    <div data-modal-target="modal" class="modal hidden">
+      <div class="modal-content">
+        <button type="button" class="close-button" data-action="click->modal#close">✖</button>
+
+        <%= render "edit", workout: @workout %>  # this is the content that will use the modal -- MUST be a partial like '_edit.html.erb'
+
+      </div>
+    </div>
+  </div>
+
+# Step 4: Add these styles to your application either in 'application.scss' or a partial for modal like '_modal.scss'
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 5px;
+  position: relative;
+  max-width: 600px;
+  width: 100%;
+}
+
+.close-button {
+  float: right;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+}
+
+.hidden {
+  display: none;
+}
+
+# Step 5: Ensure that 'modal_controller.js' has been registered in 'app/javascript/controllers/index.js':
+import { application } from "controllers/application"
+import { eagerLoadControllersFrom } from "@hotwired/stimulus-loading"
+eagerLoadControllersFrom("controllers", application)
+import SetModalController from "./modal_controller"
+application.register("set-modal", SetModalController)
+
+# Step 6: Repeat step 3 for any part of the app that will use the modal.
