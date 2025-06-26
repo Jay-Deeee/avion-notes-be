@@ -44,3 +44,5 @@ bundle install; rails db:migrate; rails db:seed; bundle exec rails assets:precom
 
 # create database in render and paste internal database url in render's env
 DATABASE_URL = [key_here]
+
+# set "Auto-Deploy" in render app settings to 'Off'
